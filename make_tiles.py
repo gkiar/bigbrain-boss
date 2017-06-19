@@ -26,8 +26,8 @@ def ims_to_tiles(indir, outdir, N=3584, M=3072):
             for idx2 in range(len(ys)-1):
                 tup = (xs[idx1],   ys[idx2],
                        xs[idx1+1], ys[idx2+1])
-                # print("Cropped ({},{}): {}".format(idx1, idx2,
-                #                                    im.crop(tup).size))
+                print("Cropped ({},{}): {}".format(idx1, idx2,
+                                                   im.crop(tup).size))
                 tim = im.crop(tup)
                 fname = "{}_x{}_y{}.png".format(f_im.split('.')[0], idx1, idx2)
                 tim.save(os.path.join(outdir, fname), format='png')

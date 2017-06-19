@@ -1,7 +1,7 @@
 #!/bin/bash
 
 START=1
-END=16
+END=400
 #END=7404
 BASEURL=ftp://bigbrain.loris.ca/BigBrainRelease.2015/2D_Final_Sections/Coronal/Png/Full_Resolution/
 LOCAL=./bigbrain/
