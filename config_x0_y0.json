@@ -13,9 +13,9 @@
     "path_processor": {
       "class": "ingestclient.plugins.stack.ZindexStackPathProcessor",
       "params": {
-				"root_dir": "/Users/gkiar/code/gkiar/bigbrain-boss/bigbrain/",
+				"root_dir": "/Users/gkiar/code/gkiar/bigbrain-boss/bigbrain_tiles/",
         "extension": "png",
-        "base_filename": "pm<p:4>o"
+        "base_filename": "pm<p:4>o_x0_y0"
       }
     },
     "tile_processor": {
@@ -35,14 +35,14 @@
   "ingest_job": {
     "resolution": 0,
     "extent": {
-      "x": [0, 6572],
-      "y": [0, 5711],
+      "x": [0, 3584],
+      "y": [0, 3072],
       "z": [1, 401],
       "t": [0, 1]
     },
     "tile_size": {
-      "x": 6572,
-      "y": 5711,
+      "x": 3584,
+      "y": 3072,
       "z": 1,
       "t": 1
     }

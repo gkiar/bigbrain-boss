@@ -1,0 +1,50 @@
+{
+  "schema": {
+      "name": "boss-v0.1-schema",
+      "validator": "BossValidatorV01"
+  },
+  "client": {
+    "backend": {
+      "name": "boss",
+      "class": "BossBackend",
+      "host": "api.boss.neurodata.io",
+      "protocol": "https"
+    },
+    "path_processor": {
+      "class": "ingestclient.plugins.stack.ZindexStackPathProcessor",
+      "params": {
+				"root_dir": "/Users/gkiar/code/gkiar/bigbrain-boss/bigbrain_tiles/",
+        "extension": "png",
+        "base_filename": "pm<p:4>o_x1_y1"
+      }
+    },
+    "tile_processor": {
+      "class": "ingestclient.plugins.stack.ZindexStackTileProcessor",
+      "params": {
+        "datatype": "uint8",
+        "extension": "png",
+				"filesystem": "local"
+      }
+    }
+  },
+  "database": {
+    "collection": "bigbrain",
+    "experiment": "release2015",
+    "channel": "image"
+  },
+  "ingest_job": {
+    "resolution": 0,
+    "extent": {
+      "x": [3584, 6572],
+      "y": [3072, 5711],
+      "z": [1, 401],
+      "t": [0, 1]
+    },
+    "tile_size": {
+      "x": 2988,
+      "y": 2639,
+      "z": 1,
+      "t": 1
+    }
+  }
+}
