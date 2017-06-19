@@ -17,6 +17,7 @@ pip install boss-ingest intern
 ```
 
 ### Step 3: Make tiles
+this step can be skipped if you're uploading full slices
 
 ```
 python make_tiles bigbrain bigbrain_tiles
