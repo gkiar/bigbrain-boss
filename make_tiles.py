@@ -12,6 +12,7 @@ import os
 
 
 def ims_to_tiles(indir, outdir, N=3584, M=3072):
+    os.system('mkdir -p {}'.format(outdir))
     f_ims = os.listdir(indir)
 
     for f_im in f_ims:
@@ -19,14 +20,14 @@ def ims_to_tiles(indir, outdir, N=3584, M=3072):
         xs = list(np.arange(0, im.size[0], N)) + [im.size[0]]
         ys = list(np.arange(0, im.size[1], M)) + [im.size[1]]
 
-        print "Image: {}".format(f_im)
-        print "Image size: {}".format(im.size)
+        print("Image: {}".format(f_im))
+        print("Image size: {}".format(im.size))
         for idx1 in range(len(xs)-1):
             for idx2 in range(len(ys)-1):
                 tup = (xs[idx1],   ys[idx2],
                        xs[idx1+1], ys[idx2+1])
-                # print "Cropped ({},{}): {}".format(idx1, idx2,
-                #                                    im.crop(tup).size)
+                # print("Cropped ({},{}): {}".format(idx1, idx2,
+                #                                    im.crop(tup).size))
                 tim = im.crop(tup)
                 fname = "{}_x{}_y{}.png".format(f_im.split('.')[0], idx1, idx2)
                 tim.save(os.path.join(outdir, fname), format='png')
@@ -40,6 +41,7 @@ def main():
     result = parser.parse_args()
 
     ims_to_tiles(result.indir, result.outdir)
+
 
 if __name__ == "__main__":
     main()
