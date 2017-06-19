@@ -17,7 +17,6 @@ pip install boss-ingest intern
 ```
 
 ### Step 3: Make tiles
-this step can be skipped if you're uploading full slices
 
 ```
 python make_tiles bigbrain bigbrain_tiles
@@ -29,8 +28,8 @@ permissions; ask your administrator if you don't have sufficient permissions.
 
 
 ### Step 5: Ingest
-
+repeat the following for each `config` file.
 ```
 BOSS_API_TOKEN=your_token
-boss-ingest --api-token ${BOSS_API_TOKEN} ./config.json
+boss-ingest --api-token ${BOSS_API_TOKEN} ./config_x0_y0.json
 ```
