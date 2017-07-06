@@ -3,6 +3,7 @@ api-token.txt
 bigbrain/
 bigbrain_tiles/
 boss
+*.swp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
