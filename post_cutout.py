@@ -44,6 +44,8 @@ def main():
 		        help='Resolution at which we post data.')
     parser.add_argument('--sixteen', '-s', action="store_true",
                         help='16 stacks in Z or nah')
+    parser.add_argument('--debug', '-d', action="store_true",
+                        help='debugging or nah')
 
     result = parser.parse_args()
 
@@ -55,8 +57,10 @@ def main():
     zmin = int(result.z[0])
     zmax = int(result.z[1])
     zstart = 1 # In BigBrain, Z starts at 1
+    zstart = zmin - zmin % 16 + zstart
     x = int(result.x[1])
     y = int(result.y[1])
+    debug = result.debug
 
     if not result.sixteen:
         # Naively uploads a single slice at a time
@@ -70,25 +74,29 @@ def main():
             im = Image.open(os.path.join(result.imdir, f_im))
             tmp_im = np.asarray(im)[:, :, np.newaxis]
             imarr = np.ascontiguousarray(tmp_im)
+            print("Shape: {},{},{}".format(*imarr.shape))
+            print("Shape: {}:{},{}:{},{}:{}".format(result.x[0], result.x[1],
+                                                    result.y[0], result.y[1],
+                                                    z, z+1))
             # Upload slice
             synboss.post(imarr, result.x, result.y, [z, z+1])
             print("Uploaded z={}".format(z))
 
     else:
-        print("Don't use this mode... current error:")
-        error = """
-        Input buffer size cannot exceed 2147483631 bytes
-        Error:
-        <built-in function compress> returned NULL without setting an error
-        """
-        print(error)
-        return -1 
+#         print("Don't use this mode... current error:")
+#         error = """
+#         Input buffer size cannot exceed 2147483631 bytes
+#         Error:
+#         <built-in function compress> returned NULL without setting an error
+#         """
+#         print(error)
+#         return -1 
 
         # Uploads 16 slices at a time
         # Move from image origin (assumed to be 0) up in steps of 16
         for z in np.arange(zstart, zmax, 16):
             # Initialize empty 16-slice matrix
-            im = np.zeros((x, y, 16))
+            bigim = np.zeros((x-1, y-1, 16), dtype=np.dtype('uint16'))
             # Look at each slice in the 16
             for idx, slic in enumerate(np.arange(z, z+16)):
                 fhandle = file_format % slic
@@ -97,19 +105,39 @@ def main():
                 elif slic < zmin:
                     continue; # Try next if we're under min
 
+                if debug:
+                    break;
                 # Verify file exists
                 if fhandle in f_imgs:
                     # Load in-bounds slice
                     tmp_im = Image.open(os.path.join(result.imdir, fhandle))
-                    im[:, :, idx] = np.asarray(tmp_im).T
+                    bigim[:, :, idx] = np.asarray(tmp_im).T
                     print("Loaded Image={}".format(fhandle))
                 else:
                     raise(IndexError, "Image within z-range not found: {}".format(fhandle))
 
-            # Ensure array is contiguous, upload slices
-            imarr = np.ascontiguousarray(im)
-            synboss.post(imarr, result.x, result.y, [z, z+16])
-            print("Uploaded z={}".format(z))
+            cutx = np.arange(0, bigim.shape[0]+1024, 1024)
+            cuty = np.arange(0, bigim.shape[1]+1024, 1024)
+            cutx[-1] = np.min((cutx[-1], bigim.shape[0]))
+            cuty[-1] = np.min((cuty[-1], bigim.shape[1]))
+
+            for ix, x_ in enumerate(cutx[:-1]):
+                for iy, y_ in enumerate(cuty[:-1]):
+                    xl1 = cutx[ix]
+                    xl2 = cutx[ix+1]
+                    yl1 = cuty[iy]
+                    yl2 = cuty[iy+1]
+
+                    im = bigim[xl1:xl2, yl1:yl2, :]
+                    print("Shape: {},{},{}".format(*im.shape))
+                    print("Uploading: {}:{}, {}:{}, {}:{}".format(xl1, xl2,
+                                                                  yl1, yl2,
+                                                                  z, z+16))
+                    print("D-type: {}".format(im.dtype))
+                    # Ensure array is contiguous, upload slices
+                    if not debug:
+                        imarr = np.ascontiguousarray(im)
+                        synboss.post(imarr, [xl1, xl2], [yl1, yl2], [z, z+16])
 
 
 if __name__ == '__main__':
